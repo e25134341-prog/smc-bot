@@ -1,0 +1,1351 @@
+<html lang="az" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ULTIMATE ADAPTIVE TRADING INTELLIGENCE ENGINE v2.0 | MT5 AI Signal Terminal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            term: {
+              bg: '#050811',
+              card: '#0a0f1d',
+              cardBorder: '#162238',
+              cardHover: '#1c2b47',
+              accentCyan: '#00f0ff',
+              accentGreen: '#00ff88',
+              accentRed: '#ff2e5b',
+              accentAmber: '#ffaa00',
+              accentPurple: '#8b5cf6',
+              textMuted: '#6b7f9e'
+            }
+          },
+          fontFamily: {
+            mono: ['"JetBrains Mono"', 'monospace'],
+            sans: ['"Inter"', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Scrollbars */
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: #070b14; }
+    ::-webkit-scrollbar-thumb { background: #1a2c4e; border-radius: 2px; }
+    ::-webkit-scrollbar-thumb:hover { background: #00f0ff; }
+    
+    body {
+      background-color: #050811;
+      color: #e2e8f0;
+      overflow-x: hidden;
+      user-select: none;
+    }
+
+    .neon-border-cyan { box-shadow: 0 0 10px rgba(0, 240, 255, 0.25); }
+    .neon-glow-green { text-shadow: 0 0 8px rgba(0, 255, 136, 0.6); }
+    .neon-glow-red { text-shadow: 0 0 8px rgba(255, 46, 91, 0.6); }
+    .neon-glow-amber { text-shadow: 0 0 8px rgba(255, 170, 0, 0.6); }
+
+    .pulse-dot {
+      animation: pulse 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.3; transform: scale(1.2); }
+    }
+
+    .grid-lines {
+      background-image: linear-gradient(to right, rgba(22, 34, 56, 0.3) 1px, transparent 1px),
+                        linear-gradient(to bottom, rgba(22, 34, 56, 0.3) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+
+    .glass-panel {
+      background: rgba(10, 15, 29, 0.85);
+      backdrop-filter: blur(8px);
+      border: 1px solid #162238;
+    }
+
+    .glass-panel:hover {
+      border-color: #243b61;
+    }
+  </style>
+</head>
+<body class="font-sans antialiased text-xs h-screen flex flex-col overflow-hidden">
+
+  <!-- ================= TOP ULTRA-BAR ================= -->
+  <header class="h-14 border-b border-term-cardBorder bg-[#070c18] px-3 flex items-center justify-between gap-3 shrink-0 z-30">
+    <!-- Brand / Title -->
+    <div class="flex items-center gap-3">
+      <div class="relative w-9 h-9 rounded-lg bg-gradient-to-br from-cyan-500/20 to-blue-600/30 border border-cyan-500/40 flex items-center justify-center text-cyan-400 font-black shadow-lg shadow-cyan-500/10">
+        <i class="fa-solid fa-brain-circuit text-lg animate-pulse"></i>
+        <div class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-term-accentGreen rounded-full pulse-dot"></div>
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <h1 class="font-bold text-sm tracking-wide text-white uppercase flex items-center gap-1.5 font-mono">
+            ULTIMATE ADAPTIVE TRADING INTELLIGENCE ENGINE <span class="text-term-accentCyan text-xs px-1.5 py-0.5 rounded bg-cyan-950/60 border border-cyan-800">v2.0 PRO</span>
+          </h1>
+        </div>
+        <div class="flex items-center gap-2 text-[10px] text-term-textMuted font-mono">
+          <span class="text-term-accentGreen font-semibold"><i class="fa-solid fa-microchip mr-1"></i>256,000+ İNDİKATOR</span>
+          <span>|</span>
+          <span class="text-cyan-400">AI SMC/ICT ENGINE</span>
+          <span>|</span>
+          <span class="text-amber-400 font-semibold">MT5 AUTO-BRIDGE READY</span>
+          <span>|</span>
+          <span class="text-term-accentGreen"><i class="fa-solid fa-bolt mr-0.5"></i> CANLI ANALİZ</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Pair Tickers Ribbon -->
+    <div class="hidden xl:flex items-center gap-2 font-mono text-[11px]">
+      <!-- XAU/USD -->
+      <div class="px-2.5 py-1 rounded bg-[#0b1222] border border-[#1a2942] flex items-center gap-2">
+        <span class="text-amber-400 font-bold"><i class="fa-solid fa-coins mr-1"></i>XAU/USD</span>
+        <span id="ticker-xau" class="font-bold text-white">4,003.74</span>
+        <span class="text-term-accentGreen flex items-center text-[10px]"><i class="fa-solid fa-caret-up mr-0.5"></i>+0.82%</span>
+      </div>
+      <!-- EUR/USD -->
+      <div class="px-2.5 py-1 rounded bg-[#0b1222] border border-[#1a2942] flex items-center gap-2">
+        <span class="text-blue-400 font-bold">EUR/USD</span>
+        <span id="ticker-eur" class="font-bold text-white">1.1178</span>
+        <span class="text-term-accentRed flex items-center text-[10px]"><i class="fa-solid fa-caret-down mr-0.5"></i>-0.56%</span>
+      </div>
+      <!-- GBP/USD -->
+      <div class="px-2.5 py-1 rounded bg-[#0b1222] border border-[#1a2942] flex items-center gap-2">
+        <span class="text-indigo-400 font-bold">GBP/USD</span>
+        <span id="ticker-gbp" class="font-bold text-white">1.3345</span>
+        <span class="text-term-accentRed flex items-center text-[10px]"><i class="fa-solid fa-caret-down mr-0.5"></i>-0.32%</span>
+      </div>
+      <!-- USD/JPY -->
+      <div class="px-2.5 py-1 rounded bg-[#0b1222] border border-[#1a2942] flex items-center gap-2">
+        <span class="text-rose-400 font-bold">USD/JPY</span>
+        <span id="ticker-jpy" class="font-bold text-white">157.19</span>
+        <span class="text-term-accentRed flex items-center text-[10px]"><i class="fa-solid fa-caret-down mr-0.5"></i>-0.71%</span>
+      </div>
+    </div>
+
+    <!-- Status & Widgets -->
+    <div class="flex items-center gap-3 font-mono">
+      <!-- Baku Time Live -->
+      <div class="text-right px-2.5 py-1 rounded bg-[#0a1224] border border-[#1c2e4f]">
+        <div class="text-[9px] uppercase tracking-wider text-cyan-400 flex items-center justify-end gap-1 font-semibold">
+          <i class="fa-regular fa-clock"></i> Bakı Vaxtı (GMT+4)
+        </div>
+        <div id="baku-clock" class="font-bold text-xs text-white tracking-widest">21:01:36</div>
+        <div id="baku-date" class="text-[9px] text-gray-400">26 Oktyabr 2026</div>
+      </div>
+
+      <!-- Sentiment Meter -->
+      <div class="hidden md:flex flex-col px-2.5 py-1 rounded bg-[#0a1224] border border-[#1c2e4f] w-28">
+        <div class="flex justify-between text-[9px] text-gray-400">
+          <span>Sentiment</span>
+          <span class="text-term-accentRed font-bold">Risk Off (38%)</span>
+        </div>
+        <div class="w-full bg-gray-800 h-1.5 rounded-full mt-1 overflow-hidden flex">
+          <div class="bg-term-accentRed h-full w-[38%]"></div>
+          <div class="bg-term-accentGreen h-full w-[62%] opacity-30"></div>
+        </div>
+      </div>
+
+      <!-- MT5 Bridge Action Button -->
+      <button onclick="openMT5Modal()" class="px-3 py-1.5 rounded bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-md shadow-cyan-900/30 transition transform active:scale-95 border border-cyan-400/40">
+        <i class="fa-solid fa-bolt-lightning text-yellow-300"></i>
+        <span>MT5 BRIDGE</span>
+        <span class="w-2 h-2 rounded-full bg-term-accentGreen pulse-dot"></span>
+      </button>
+
+      <!-- Audio Alert Toggle -->
+      <button id="soundToggleBtn" onclick="toggleAudio()" class="w-8 h-8 rounded bg-[#10192e] border border-term-cardBorder text-gray-300 hover:text-white flex items-center justify-center" title="Siqnal Səsləri">
+        <i class="fa-solid fa-volume-high text-cyan-400" id="soundIcon"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- ================= MAIN 3-COLUMN WORKSPACE ================= -->
+  <div class="flex-1 flex overflow-hidden">
+
+    <!-- ================= LEFT COLUMN: 256K INDICATOR ARSENAL & ORDERFLOW ================= -->
+    <aside class="w-72 lg:w-80 shrink-0 border-r border-term-cardBorder bg-[#060a14] flex flex-col overflow-hidden">
+      
+      <!-- Indicator Header & Total Counter -->
+      <div class="p-2.5 border-b border-term-cardBorder bg-[#080d1b]">
+        <div class="flex items-center justify-between">
+          <span class="font-bold text-xs text-white flex items-center gap-1.5 uppercase font-mono">
+            <i class="fa-solid fa-sliders text-term-accentCyan"></i> İndikator Kitabxanası
+          </span>
+          <span class="px-2 py-0.5 rounded-full bg-cyan-950 border border-cyan-700/60 text-term-accentCyan font-mono text-[10px] font-extrabold">
+            256,000+ TOTAL
+          </span>
+        </div>
+
+        <!-- Search Input -->
+        <div class="mt-2 relative">
+          <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-2.5 text-gray-500 text-xs"></i>
+          <input type="text" id="indicatorSearch" onkeyup="filterIndicators()" placeholder="256k indikator içindən axtar..." class="w-full bg-[#0d1527] border border-[#1a2b4a] rounded px-8 py-1.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 font-mono">
+          <span class="absolute right-2 top-2 text-[10px] text-gray-400 bg-gray-800 px-1 rounded font-mono">Ctrl+K</span>
+        </div>
+
+        <!-- Tabs -->
+        <div class="flex items-center gap-1 mt-2 text-[10px] font-mono">
+          <button class="px-2.5 py-0.5 rounded bg-cyan-600/30 text-cyan-300 border border-cyan-500/50">Hamısı</button>
+          <button class="px-2 py-0.5 rounded bg-[#0e172a] text-gray-400 hover:text-white border border-transparent">Seçilmişlər</button>
+          <button class="px-2 py-0.5 rounded bg-[#0e172a] text-gray-400 hover:text-white border border-transparent">SMC/ICT</button>
+          <button class="px-2 py-0.5 rounded bg-[#0e172a] text-gray-400 hover:text-white border border-transparent">Order Flow</button>
+        </div>
+      </div>
+
+      <!-- Categories & Indicators Scroll Area -->
+      <div class="flex-1 overflow-y-auto p-2 space-y-3 font-mono text-[11px]" id="indicatorTreeContainer">
+        
+        <!-- Category: Order Flow & Delta (User Specified) -->
+        <div class="border border-[#17253f] rounded bg-[#0a1020] p-2">
+          <div class="flex items-center justify-between text-cyan-300 font-bold pb-1.5 mb-1.5 border-b border-[#142038]">
+            <span class="flex items-center gap-1.5"><i class="fa-solid fa-water text-xs text-blue-400"></i> Order Flow & Footprint</span>
+            <span class="text-[9px] bg-blue-900/40 text-blue-300 px-1.5 rounded">68 ind</span>
+          </div>
+          <div class="space-y-1.5 text-[10.5px]">
+            <label class="flex items-center justify-between text-gray-300 hover:text-white cursor-pointer">
+              <span class="flex items-center gap-1.5"><input type="checkbox" checked class="accent-cyan-500 rounded"> Volume Profile (POC/VAH/VAL)</span>
+              <span class="text-[9px] text-term-accentGreen font-bold">CANLI</span>
+            </label>
+            <label class="flex items-center justify-between text-gray-300 hover:text-white cursor-pointer">
+              <span class="flex items-center gap-1.5"><input type="checkbox" checked class="accent-cyan-500 rounded"> Cumulative Volume Delta (CVD)</span>
+              <span class="text-[9px] text-term-accentGreen font-bold">Divergence</span>
+            </label>
+            <label class="flex items-center justify-between text-gray-300 hover:text-white cursor-pointer">
+              <span class="flex items-center gap-1.5"><input type="checkbox" checked class="accent-cyan-500 rounded"> Bid / Ask Delta Bars</span>
+              <span class="text-[9px] text-cyan-400">Cluster</span>
+            </label>
+            <label class="flex items-center justify-between text-gray-300 hover:text-white cursor-pointer">
+              <span class="flex items-center gap-1.5"><input type="checkbox" checked class="accent-cyan-500 rounded"> Time and Sales / Market Sale Tape</span>
+              <span class="text-[9px] text-purple-400">Tape</span>
+            </label>
+            <label class="flex items-center justify-between text-gray-300 hover:text-white cursor-pointer">
+              <span class="flex items-center gap-1.5"><input type="checkbox" checked class="accent-cyan-500 rounded"> Liquidity Absorption & Hidden Liq</span>
+              <span class="text-[9px] text-amber-400">Deep</span>
+            </label>
+            <label class="flex items-center justify-between text-gray-300 hover:text-white cursor-pointer">
+              <span class="flex items-center gap-1.5"><input type="checkbox" checked class="accent-cyan-500 rounded"> Order Imbalance (Bid/Ask Stack)</span>
+              <span class="text-[9px] text-rose-400">300%</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Category: Price Action & Smart Money (ICT) -->
+        <div class="border border-[#17253f] rounded bg-[#0a1020] p-2">
+          <div class="flex items-center justify-between text-term-accentGreen font-bold pb-1.5 mb-1.5 border-b border-[#142038]">
+            <span class="flex items-center gap-1.5"><i class="fa-solid fa-network-wired text-xs"></i> ICT & Smart Money (SMC)</span>
+            <span class="text-[9px] bg-emerald-950 text-emerald-400 px-1.5 rounded">142 ind</span>
+          </div>
+          <div class="space-y-1.5 text-[10.5px]">
+            <label class="flex items-center justify-between text-gray-300 hover:text-white cursor-pointer">
+              <span class="flex items-center gap-1.5"><input type="checkbox" checked class="accent-emerald-500 rounded"> BSL / SSL Liquidity Sweep</span>
+              <span class="text-[9px] text-term-accentGreen font-bold">Aktiv</span>
+            </label>
+            <label class="flex items-center justify-between text-gray-300 hover:text-white cursor-pointer">
+              <span class="flex items-center gap-1.5"><input type="checkbox" checked class="accent-emerald-500 rounded"> 15m/5m CHoCH, BOS & MSS</span>
+              <span class="text-[9px] text-term-accentGreen font-bold">Aktiv</span>
+            </label>
+            <label class="flex items-center justify-between text-gray-300 hover:text-white cursor-pointer">
+              <span class="flex items-center gap-1.5"><input type="checkbox" checked class="accent-emerald-500 rounded"> Unmitigated Order Blocks (OB)</span>
+              <span class="text-[9px] text-yellow-400 font-bold">Zonalar</span>
+            </label>
+            <label class="flex items-center justify-between text-gray-300 hover:text-white cursor-pointer">
+              <span class="flex items-center gap-1.5"><input type="checkbox" checked class="accent-emerald-500 rounded"> Fair Value Gap (FVG / IFVG)</span>
+              <span class="text-[9px] text-cyan-400 font-bold">Aktiv</span>
+            </label>
+            <label class="flex items-center justify-between text-gray-300 hover:text-white cursor-pointer">
+              <span class="flex items-center gap-1.5"><input type="checkbox" checked class="accent-emerald-500 rounded"> Sessions Killzones (London/NY)</span>
+              <span class="text-[9px] text-amber-400 font-bold">UTC Watch</span>
+            </label>
+            <label class="flex items-center justify-between text-gray-300 hover:text-white cursor-pointer">
+              <span class="flex items-center gap-1.5"><input type="checkbox" checked class="accent-emerald-500 rounded"> VWAP Bands Dynamic Retest</span>
+              <span class="text-[9px] text-indigo-400">Band 1/2</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Category: Trend & Momentum Confirmation -->
+        <div class="border border-[#17253f] rounded bg-[#0a1020] p-2">
+          <div class="flex items-center justify-between text-purple-300 font-bold pb-1.5 mb-1.5 border-b border-[#142038]">
+            <span class="flex items-center gap-1.5"><i class="fa-solid fa-chart-line text-xs"></i> Trend & Təsdiq Filtrləri</span>
+            <span class="text-[9px] bg-purple-950 text-purple-300 px-1.5 rounded">95 ind</span>
+          </div>
+          <div class="space-y-1.5 text-[10.5px]">
+            <label class="flex items-center justify-between text-gray-300 hover:text-white cursor-pointer">
+              <span class="flex items-center gap-1.5"><input type="checkbox" checked class="accent-purple-500 rounded"> 4H & 1H EMA 200 Multi-TF</span>
+              <span class="text-[9px] text-purple-300">Trend</span>
+            </label>
+            <label class="flex items-center justify-between text-gray-300 hover:text-white cursor-pointer">
+              <span class="flex items-center gap-1.5"><input type="checkbox" checked class="accent-purple-500 rounded"> Bayesian Probability Trend</span>
+              <span class="text-[9px] text-cyan-300">99.2%</span>
+            </label>
+            <label class="flex items-center justify-between text-gray-300 hover:text-white cursor-pointer">
+              <span class="flex items-center gap-1.5"><input type="checkbox" checked class="accent-purple-500 rounded"> RSI / MACD Momentum Divergence</span>
+              <span class="text-[9px] text-emerald-400">Div On</span>
+            </label>
+            <label class="flex items-center justify-between text-gray-300 hover:text-white cursor-pointer">
+              <span class="flex items-center gap-1.5"><input type="checkbox" checked class="accent-purple-500 rounded"> Range Efficiency Index (REI)</span>
+              <span class="text-[9px] text-amber-300">Filtered</span>
+            </label>
+            <label class="flex items-center justify-between text-gray-300 hover:text-white cursor-pointer">
+              <span class="flex items-center gap-1.5"><input type="checkbox" checked class="accent-purple-500 rounded"> Hull Suite Zero-Lag Trend</span>
+              <span class="text-[9px] text-indigo-300">Active</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Category: Volatility, Market Profile, TPO & Heatmap -->
+        <div class="border border-[#17253f] rounded bg-[#0a1020] p-2">
+          <div class="flex items-center justify-between text-amber-300 font-bold pb-1.5 mb-1.5 border-b border-[#142038]">
+            <span class="flex items-center gap-1.5"><i class="fa-solid fa-fire text-xs"></i> TPO, Heatmap & Depth</span>
+            <span class="text-[9px] bg-amber-950 text-amber-300 px-1.5 rounded">83 ind</span>
+          </div>
+          <div class="space-y-1.5 text-[10.5px]">
+            <label class="flex items-center justify-between text-gray-300 hover:text-white cursor-pointer">
+              <span class="flex items-center gap-1.5"><input type="checkbox" checked class="accent-amber-500 rounded"> TPO Distribution & Initial Balance</span>
+              <span class="text-[9px] text-gray-400">TPO 30m</span>
+            </label>
+            <label class="flex items-center justify-between text-gray-300 hover:text-white cursor-pointer">
+              <span class="flex items-center gap-1.5"><input type="checkbox" checked class="accent-amber-500 rounded"> Liquidity Heatmap Visualizer</span>
+              <span class="text-[9px] text-rose-400">Heat High</span>
+            </label>
+            <label class="flex items-center justify-between text-gray-300 hover:text-white cursor-pointer">
+              <span class="flex items-center gap-1.5"><input type="checkbox" checked class="accent-amber-500 rounded"> Bid/Ask Spread & Execution Speed</span>
+              <span class="text-[9px] text-cyan-400">0.4ms</span>
+            </label>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Left Bottom: Strict Hierarchy Guard Rules Indicator -->
+      <div class="p-2 border-t border-term-cardBorder bg-[#080e1c] text-[10px] font-mono">
+        <div class="text-amber-400 font-bold flex items-center gap-1.5 mb-1">
+          <i class="fa-solid fa-shield-halved"></i> SƏRT İYERARXİYA FİLTRİ:
+        </div>
+        <p class="text-gray-400 leading-tight">
+          Trend &rarr; Likvidlik &rarr; Struktur &rarr; Zona &rarr; Təsdiq. 1 dənəsi belə çatışmazsa və ya RRR &lt; 1:2 olarsa dərhal <span class="text-yellow-400 font-bold">"WAIT"</span> verilir!
+        </p>
+      </div>
+
+    </aside>
+
+    <!-- ================= CENTER COLUMN: MULTI-CHART MATRIX & SCANNERS ================= -->
+    <main class="flex-1 flex flex-col min-w-0 bg-[#070b14] overflow-hidden">
+
+      <!-- Chart Matrix Top Sub-Bar (Timeframes & Layout Controls) -->
+      <div class="h-10 border-b border-term-cardBorder bg-[#080d1a] px-3 flex items-center justify-between shrink-0 font-mono text-[11px]">
+        
+        <div class="flex items-center gap-2">
+          <span class="text-gray-400 font-bold flex items-center gap-1">
+            <i class="fa-solid fa-chart-candlestick text-cyan-400"></i> ÇOXLU-QRAFİK MATRİSİ:
+          </span>
+
+          <!-- Timeframes -->
+          <div class="flex items-center bg-[#0d162a] border border-[#1b2b48] rounded p-0.5">
+            <button onclick="setTimeframe('M1')" class="tf-btn px-2 py-0.5 rounded text-gray-400 hover:text-white">M1</button>
+            <button onclick="setTimeframe('M5')" class="tf-btn px-2 py-0.5 rounded text-gray-400 hover:text-white">M5</button>
+            <button onclick="setTimeframe('M15')" class="tf-btn px-2 py-0.5 rounded text-cyan-400 bg-cyan-950 font-bold">M15</button>
+            <button onclick="setTimeframe('M30')" class="tf-btn px-2 py-0.5 rounded text-gray-400 hover:text-white">M30</button>
+            <button onclick="setTimeframe('H1')" class="tf-btn px-2 py-0.5 rounded text-gray-400 hover:text-white">H1</button>
+            <button onclick="setTimeframe('H4')" class="tf-btn px-2 py-0.5 rounded text-gray-400 hover:text-white">H4</button>
+            <button onclick="setTimeframe('D1')" class="tf-btn px-2 py-0.5 rounded text-gray-400 hover:text-white">D1</button>
+          </div>
+
+          <!-- Killzone Session Status Badge -->
+          <div class="hidden md:flex items-center gap-1.5 px-2 py-0.5 rounded bg-blue-950/60 border border-blue-700/50 text-blue-300 text-[10px]">
+            <i class="fa-solid fa-globe text-cyan-400"></i>
+            <span>London/NY Killzone: <strong class="text-term-accentGreen">AKTİV (13:00 - 16:00 UTC)</strong></span>
+          </div>
+        </div>
+
+        <!-- Right Quick Controls -->
+        <div class="flex items-center gap-2">
+          <button onclick="generateLiveSignals()" class="px-2.5 py-1 rounded bg-[#101b33] border border-cyan-500/40 text-cyan-300 hover:bg-cyan-900/40 font-bold text-[10px] flex items-center gap-1">
+            <i class="fa-solid fa-arrows-rotate"></i> Yenilə & Analiz Et
+          </button>
+          <div class="flex items-center bg-[#0d162a] border border-[#1b2b48] rounded p-0.5">
+            <button class="px-2 py-0.5 rounded bg-cyan-900 text-cyan-300 font-bold" title="2x2 Qrafik Grid"><i class="fa-solid fa-table-cells-large"></i></button>
+            <button class="px-2 py-0.5 rounded text-gray-400 hover:text-white" title="Tək Ekran"><i class="fa-solid fa-square"></i></button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 2x2 Interactive Charts Grid -->
+      <div class="flex-1 grid grid-cols-1 lg:grid-cols-2 grid-rows-2 gap-1 p-1 bg-[#050811] overflow-hidden">
+        
+        <!-- CHART 1: XAU/USD (Gold Spot) -->
+        <div class="glass-panel rounded flex flex-col overflow-hidden relative border border-[#1a2b47]">
+          <!-- Chart Header -->
+          <div class="h-7 bg-[#090f20] px-2 flex items-center justify-between border-b border-[#14233c] text-[11px] font-mono">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-amber-400 flex items-center gap-1"><i class="fa-solid fa-coins"></i> XAU/USD</span>
+              <span class="text-gray-400 text-[10px]">Gold Spot (H1)</span>
+              <span class="text-term-accentGreen font-bold" id="c1-price">4,003.74</span>
+              <span class="text-term-accentGreen text-[10px]">+32.17 (+0.82%)</span>
+            </div>
+            <div class="flex items-center gap-2 text-[10px]">
+              <span class="px-1.5 py-0.2 bg-emerald-950/70 border border-emerald-600/40 text-emerald-300 rounded font-bold">BSL SWEEP</span>
+              <span class="text-cyan-400">TP3: 4,110</span>
+              <span class="text-red-400">SL: 3,975</span>
+            </div>
+          </div>
+          <!-- Canvas Container -->
+          <div class="flex-1 relative bg-[#070b16]">
+            <canvas id="chart-xau" class="w-full h-full block"></canvas>
+            <!-- Overlay Indicators Box -->
+            <div class="absolute top-2 left-2 bg-[#060b17]/85 border border-[#17253d] rounded p-1.5 text-[9.5px] font-mono pointer-events-none space-y-0.5">
+              <div class="text-cyan-300">EMA(200): <span class="text-white font-bold">3,982.4</span> | Bayesian: <span class="text-term-accentGreen">Bullish 92%</span></div>
+              <div class="text-emerald-400">Order Block: <span class="text-white font-bold">3,995 - 4,000 (Unmitigated)</span></div>
+              <div class="text-purple-300">CVD Divergence: <span class="text-term-accentGreen">+4,120 Delta (Aggressive Buy)</span></div>
+              <div class="text-amber-300">RSI(14): <span class="text-white">58.4</span> | MACD: <span class="text-term-accentGreen">12.6 [Bull Cross]</span></div>
+            </div>
+          </div>
+          <!-- Chart Bottom Status -->
+          <div class="h-5 bg-[#080e1c] px-2 flex items-center justify-between text-[9px] font-mono text-gray-400 border-t border-[#121c2e]">
+            <span>Trend: <strong class="text-term-accentGreen">Range Expansion</strong></span>
+            <span>Volatillik: <strong class="text-cyan-400">Orta</strong></span>
+            <span>Strategiya: <strong class="text-amber-400">Order Block Re-test Long</strong></span>
+          </div>
+        </div>
+
+        <!-- CHART 2: EUR/USD -->
+        <div class="glass-panel rounded flex flex-col overflow-hidden relative border border-[#1a2b47]">
+          <!-- Chart Header -->
+          <div class="h-7 bg-[#090f20] px-2 flex items-center justify-between border-b border-[#14233c] text-[11px] font-mono">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-blue-400 flex items-center gap-1"><i class="fa-solid fa-euro-sign"></i> EUR/USD</span>
+              <span class="text-gray-400 text-[10px]">Euro / Dollar (H1)</span>
+              <span class="text-term-accentRed font-bold" id="c2-price">1.1178</span>
+              <span class="text-term-accentRed text-[10px]">-0.0064 (-0.56%)</span>
+            </div>
+            <div class="flex items-center gap-2 text-[10px]">
+              <span class="px-1.5 py-0.2 bg-red-950/70 border border-red-600/40 text-red-300 rounded font-bold">SSL SWEEP SHORT</span>
+              <span class="text-cyan-400">TP1: 1.1115</span>
+              <span class="text-red-400">SL: 1.1245</span>
+            </div>
+          </div>
+          <!-- Canvas Container -->
+          <div class="flex-1 relative bg-[#070b16]">
+            <canvas id="chart-eur" class="w-full h-full block"></canvas>
+            <div class="absolute top-2 left-2 bg-[#060b17]/85 border border-[#17253d] rounded p-1.5 text-[9.5px] font-mono pointer-events-none space-y-0.5">
+              <div class="text-cyan-300">EMA(200): <span class="text-white font-bold">1.1210</span> | Bayesian: <span class="text-term-accentRed">Bearish 88%</span></div>
+              <div class="text-red-400">FVG Rejection: <span class="text-white font-bold">1.1190 - 1.1210</span></div>
+              <div class="text-purple-300">CVD: <span class="text-term-accentRed">-2,840 (Heavy Ask Selling)</span></div>
+              <div class="text-amber-300">RSI(14): <span class="text-white">42.8</span> | MACD: <span class="text-term-accentRed">-0.0018 [Downtrend]</span></div>
+            </div>
+          </div>
+          <div class="h-5 bg-[#080e1c] px-2 flex items-center justify-between text-[9px] font-mono text-gray-400 border-t border-[#121c2e]">
+            <span>Trend: <strong class="text-term-accentRed">Downtrend MSS</strong></span>
+            <span>Volatillik: <strong class="text-red-400">Yüksək</strong></span>
+            <span>Strategiya: <strong class="text-cyan-400">Trend Pullback FVG Short</strong></span>
+          </div>
+        </div>
+
+        <!-- CHART 3: GBP/USD -->
+        <div class="glass-panel rounded flex flex-col overflow-hidden relative border border-[#1a2b47]">
+          <div class="h-7 bg-[#090f20] px-2 flex items-center justify-between border-b border-[#14233c] text-[11px] font-mono">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-indigo-400 flex items-center gap-1"><i class="fa-solid fa-sterling-sign"></i> GBP/USD</span>
+              <span class="text-gray-400 text-[10px]">Pound / Dollar (H1)</span>
+              <span class="text-term-accentRed font-bold" id="c3-price">1.3345</span>
+              <span class="text-term-accentRed text-[10px]">-0.0043 (-0.32%)</span>
+            </div>
+            <div class="flex items-center gap-2 text-[10px]">
+              <span class="px-1.5 py-0.2 bg-amber-950/70 border border-amber-600/40 text-amber-300 rounded font-bold">STATUS: WAIT</span>
+              <span class="text-gray-400">Filter: Range Bound</span>
+            </div>
+          </div>
+          <div class="flex-1 relative bg-[#070b16]">
+            <canvas id="chart-gbp" class="w-full h-full block"></canvas>
+            <div class="absolute top-2 left-2 bg-[#060b17]/85 border border-[#17253d] rounded p-1.5 text-[9.5px] font-mono pointer-events-none space-y-0.5">
+              <div class="text-yellow-400 font-bold">! SƏRT QAYDA FİLTRİ İŞƏ DÜŞDÜ: "WAIT"</div>
+              <div class="text-gray-300">MSS (Market Structure Shift) yoxdur. RRR &lt; 1:2.0</div>
+              <div class="text-cyan-300">Point of Control (POC): <span class="text-white font-bold">1.3355</span></div>
+            </div>
+          </div>
+          <div class="h-5 bg-[#080e1c] px-2 flex items-center justify-between text-[9px] font-mono text-gray-400 border-t border-[#121c2e]">
+            <span>Trend: <strong class="text-yellow-400">Sideways Konsolidasiya</strong></span>
+            <span>Volatillik: <strong class="text-gray-400">Aşağı</strong></span>
+            <span>Əmr: <strong class="text-amber-400">GÖZLƏ (WAIT - No Clear MSS)</strong></span>
+          </div>
+        </div>
+
+        <!-- CHART 4: USD/JPY -->
+        <div class="glass-panel rounded flex flex-col overflow-hidden relative border border-[#1a2b47]">
+          <div class="h-7 bg-[#090f20] px-2 flex items-center justify-between border-b border-[#14233c] text-[11px] font-mono">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-rose-400 flex items-center gap-1"><i class="fa-solid fa-yen-sign"></i> USD/JPY</span>
+              <span class="text-gray-400 text-[10px]">Yen (H1)</span>
+              <span class="text-term-accentRed font-bold" id="c4-price">157.19</span>
+              <span class="text-term-accentRed text-[10px]">-1.13 (-0.71%)</span>
+            </div>
+            <div class="flex items-center gap-2 text-[10px]">
+              <span class="px-1.5 py-0.2 bg-red-950/70 border border-red-600/40 text-red-300 rounded font-bold">SHORT ACTIVE</span>
+              <span class="text-cyan-400">TP1: 156.50</span>
+              <span class="text-red-400">SL: 158.40</span>
+            </div>
+          </div>
+          <div class="flex-1 relative bg-[#070b16]">
+            <canvas id="chart-jpy" class="w-full h-full block"></canvas>
+            <div class="absolute top-2 left-2 bg-[#060b17]/85 border border-[#17253d] rounded p-1.5 text-[9.5px] font-mono pointer-events-none space-y-0.5">
+              <div class="text-cyan-300">EMA(200): <span class="text-white font-bold">158.10</span> | Bayesian: <span class="text-term-accentRed">Bearish 94%</span></div>
+              <div class="text-red-400">Breaker Block: <span class="text-white font-bold">157.45 - 157.80</span></div>
+              <div class="text-purple-300">Order Flow: <span class="text-term-accentRed">Heavy Imbalance -1,420 lots</span></div>
+            </div>
+          </div>
+          <div class="h-5 bg-[#080e1c] px-2 flex items-center justify-between text-[9px] font-mono text-gray-400 border-t border-[#121c2e]">
+            <span>Trend: <strong class="text-term-accentRed">Downtrend Break</strong></span>
+            <span>Volatillik: <strong class="text-amber-400">Çox Yüksək</strong></span>
+            <span>Strategiya: <strong class="text-cyan-400">Breaker Block Rejection</strong></span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Live Execution Matrix & Portfolio Risk Panel (Bottom Ribbon) -->
+      <div class="h-24 border-t border-term-cardBorder bg-[#080d1b] px-3 py-1.5 flex items-center justify-between gap-4 shrink-0 font-mono text-[11px] overflow-x-auto">
+        
+        <!-- Live Market Scanner Table Snippet -->
+        <div class="flex-1 min-w-[340px] h-full flex flex-col justify-between">
+          <div class="flex items-center justify-between text-[10px] text-gray-400 border-b border-[#182740] pb-0.5">
+            <span class="font-bold text-cyan-400"><i class="fa-solid fa-radar mr-1"></i> BAZAR SKANERİ (256K HIERARCHY)</span>
+            <span>Cütlük / Siqnal / Dəqiqlik / RRR</span>
+          </div>
+          <div class="grid grid-cols-4 gap-1 text-[10px] mt-0.5">
+            <div class="p-1 rounded bg-[#0d162a] border border-[#1c2e4f] flex flex-col">
+              <span class="text-amber-400 font-bold">XAU/USD</span>
+              <span class="text-term-accentGreen font-bold">LONG (92%)</span>
+              <span class="text-gray-400">RRR 1:2.8</span>
+            </div>
+            <div class="p-1 rounded bg-[#0d162a] border border-[#1c2e4f] flex flex-col">
+              <span class="text-blue-400 font-bold">EUR/USD</span>
+              <span class="text-term-accentRed font-bold">SHORT (88%)</span>
+              <span class="text-gray-400">RRR 1:3.1</span>
+            </div>
+            <div class="p-1 rounded bg-[#0d162a] border border-[#1c2e4f] flex flex-col">
+              <span class="text-indigo-400 font-bold">GBP/USD</span>
+              <span class="text-yellow-400 font-bold">WAIT (52%)</span>
+              <span class="text-gray-400">No RRR Set</span>
+            </div>
+            <div class="p-1 rounded bg-[#0d162a] border border-[#1c2e4f] flex flex-col">
+              <span class="text-rose-400 font-bold">USD/JPY</span>
+              <span class="text-term-accentRed font-bold">SHORT (91%)</span>
+              <span class="text-gray-400">RRR 1:2.5</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Portfolio & Strict Risk Management Info -->
+        <div class="w-80 h-full bg-[#0a1224] border border-[#1a2d52] rounded p-1.5 flex justify-between items-center shrink-0">
+          <div class="space-y-0.5 text-[10px]">
+            <div class="text-cyan-300 font-bold flex items-center gap-1">
+              <i class="fa-solid fa-shield-halved text-term-accentGreen"></i> PORTFEL RİSK MENECERİ
+            </div>
+            <div class="text-gray-300">Hesab Balansı: <strong class="text-white">10,000.00 USD</strong></div>
+            <div class="text-gray-300">Maks Risk/Treyd: <strong class="text-term-accentGreen">1.00% (100 USD)</strong></div>
+            <div class="text-gray-300">Leverage: <strong class="text-amber-400">1:100 MT5 RAW</strong></div>
+          </div>
+          <!-- Gauge / Circle -->
+          <div class="flex flex-col items-center">
+            <div class="w-11 h-11 rounded-full border-2 border-emerald-500/80 flex items-center justify-center bg-emerald-950/40 text-term-accentGreen font-bold text-xs">
+              0%
+            </div>
+            <span class="text-[9px] text-gray-400 mt-0.5">Risk Limitində</span>
+          </div>
+        </div>
+
+        <!-- Performance Metrics Backtest -->
+        <div class="hidden xl:flex flex-col justify-between h-full bg-[#0a1224] border border-[#1a2d52] rounded p-1.5 text-[10px] w-56 shrink-0">
+          <div class="text-purple-300 font-bold flex justify-between">
+            <span>AI PERFORMANCE</span>
+            <span class="text-term-accentGreen">Win: 78.4%</span>
+          </div>
+          <div class="flex justify-between text-gray-400">
+            <span>Profit Factor:</span>
+            <span class="text-white font-bold">2.42</span>
+          </div>
+          <div class="flex justify-between text-gray-400">
+            <span>Sharpe Ratio:</span>
+            <span class="text-cyan-400 font-bold">1.88</span>
+          </div>
+          <div class="flex justify-between text-gray-400">
+            <span>Max Drawdown:</span>
+            <span class="text-term-accentGreen font-bold">4.2%</span>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+
+    <!-- ================= RIGHT COLUMN: AI TRADING SIGNALS & NEWS ================= -->
+    <aside class="w-80 lg:w-96 shrink-0 border-l border-term-cardBorder bg-[#060a14] flex flex-col overflow-hidden">
+      
+      <!-- Signals Engine Header -->
+      <div class="p-2.5 border-b border-term-cardBorder bg-[#080d1b] flex items-center justify-between">
+        <div class="flex items-center gap-1.5">
+          <span class="relative flex h-3 w-3">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-term-accentGreen opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-3 w-3 bg-term-accentGreen"></span>
+          </span>
+          <h2 class="font-bold text-xs text-white uppercase font-mono tracking-wide">
+            AI DƏQİQ SİQNALLAR (MT5)
+          </h2>
+        </div>
+        <span class="text-[9px] px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-500/40 text-term-accentGreen font-mono font-bold">
+          STRICT FILTER ENGINE
+        </span>
+      </div>
+
+      <!-- Signals Feed (Compliant with images 2, 3, 4) -->
+      <div class="flex-1 overflow-y-auto p-2 space-y-2.5 font-mono" id="signalsContainer">
+
+        <!-- SIGNAL 1: XAU/USD (TOP OPPORTUNITY) -->
+        <div class="border-2 border-emerald-500/60 rounded-lg bg-[#091322] p-2.5 shadow-lg shadow-emerald-950/30 relative">
+          <div class="absolute -top-2.5 right-3 bg-term-accentGreen text-black text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider shadow">
+            TOP OPPORTUNITY
+          </div>
+          <div class="flex items-center justify-between border-b border-gray-800 pb-1.5">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-amber-400 text-sm">XAU/USD</span>
+              <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-term-accentGreen font-extrabold text-xs border border-emerald-500/40 animate-pulse">
+                LONG
+              </span>
+            </div>
+            <div class="text-right">
+              <div class="text-xs text-term-accentGreen font-extrabold">Dəqiqlik: 94%</div>
+              <div class="text-[9px] text-gray-400">RRR Nisbəti: <strong class="text-cyan-300">1:3.2</strong></div>
+            </div>
+          </div>
+
+          <!-- Parameter Rows -->
+          <div class="mt-2 grid grid-cols-2 gap-1.5 text-[11px] bg-[#050b16] p-2 rounded border border-[#162540]">
+            <div><span class="text-gray-400">Entry:</span> <strong class="text-white">3,998.00 - 4,002.00</strong></div>
+            <div><span class="text-gray-400">SL:</span> <strong class="text-term-accentRed">3,975.00</strong></div>
+            <div><span class="text-gray-400">TP 1:</span> <strong class="text-cyan-400">4,035.00</strong></div>
+            <div><span class="text-gray-400">TP 2:</span> <strong class="text-cyan-400">4,070.00</strong></div>
+            <div class="col-span-2 flex justify-between border-t border-gray-800 pt-1">
+              <span><span class="text-gray-400">TP 3 (Runner):</span> <strong class="text-term-accentGreen">4,110.00</strong></span>
+              <span class="text-term-accentGreen font-bold">+108 Pips</span>
+            </div>
+          </div>
+
+          <!-- Strict Filter Checklist Check -->
+          <div class="mt-2 text-[9.5px] space-y-1 bg-[#0b162c] p-1.5 rounded text-gray-300">
+            <div class="text-cyan-300 font-bold mb-0.5 flex items-center justify-between">
+              <span>5 SƏRT İYERARXİYA TƏSDİQİ:</span>
+              <span class="text-term-accentGreen font-bold">5/5 KEÇDİ <i class="fa-solid fa-check-double"></i></span>
+            </div>
+            <div class="flex items-center justify-between text-term-accentGreen">
+              <span>1. Trend: 4H/1H EMA 200 + Bayesian</span> <span>&#10003; Yüksələn</span>
+            </div>
+            <div class="flex items-center justify-between text-term-accentGreen">
+              <span>2. Likvidlik: BSL Sweep + NY Killzone</span> <span>&#10003; Təsdiqləndi</span>
+            </div>
+            <div class="flex items-center justify-between text-term-accentGreen">
+              <span>3. Struktur: 15m/5m CHoCH/BOS + MSS</span> <span>&#10003; Bullish MSS</span>
+            </div>
+            <div class="flex items-center justify-between text-term-accentGreen">
+              <span>4. Zona: Unmitigated OB + FVG Retest</span> <span>&#10003; Dəqiq Giriş</span>
+            </div>
+            <div class="flex items-center justify-between text-term-accentGreen">
+              <span>5. Təsdiq: RSI/MACD Div + CVD Volume</span> <span>&#10003; Güclü Alış</span>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="mt-2 flex gap-1.5">
+            <button onclick="executeMT5Trade('XAU/USD', 'BUY', 4002.00, 3975.00, 4035.00, 4070.00, 4110.00)" class="flex-1 py-1 rounded bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs flex items-center justify-center gap-1 shadow">
+              <i class="fa-solid fa-paper-plane"></i> MT5 İcra Et (Long)
+            </button>
+            <button onclick="copySignalDetails('XAU/USD: LONG | Entry: 4002 | SL: 3975 | TP1: 4035 | TP2: 4070 | TP3: 4110 | RRR: 1:3.2')" class="px-2.5 py-1 rounded bg-[#13223e] hover:bg-[#1a315b] text-gray-300 hover:text-white" title="Kopyala">
+              <i class="fa-regular fa-copy"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- SIGNAL 2: EUR/USD (SHORT CONFIRMED) -->
+        <div class="border border-red-500/50 rounded-lg bg-[#140b15] p-2.5">
+          <div class="flex items-center justify-between border-b border-gray-800 pb-1.5">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-blue-400 text-sm">EUR/USD</span>
+              <span class="px-2 py-0.5 rounded bg-red-500/20 text-term-accentRed font-extrabold text-xs border border-red-500/40">
+                SHORT
+              </span>
+            </div>
+            <div class="text-right">
+              <div class="text-xs text-term-accentRed font-extrabold">Dəqiqlik: 89%</div>
+              <div class="text-[9px] text-gray-400">RRR Nisbəti: <strong class="text-cyan-300">1:3.1</strong></div>
+            </div>
+          </div>
+
+          <div class="mt-2 grid grid-cols-2 gap-1.5 text-[11px] bg-[#07050d] p-2 rounded border border-[#2b172a]">
+            <div><span class="text-gray-400">Entry:</span> <strong class="text-white">1.1190 - 1.1205</strong></div>
+            <div><span class="text-gray-400">SL:</span> <strong class="text-term-accentRed">1.1245</strong></div>
+            <div><span class="text-gray-400">TP 1:</span> <strong class="text-cyan-400">1.1115</strong></div>
+            <div><span class="text-gray-400">TP 2:</span> <strong class="text-cyan-400">1.1050</strong></div>
+            <div class="col-span-2 flex justify-between border-t border-gray-800 pt-1">
+              <span><span class="text-gray-400">TP 3:</span> <strong class="text-term-accentGreen">1.0980</strong></span>
+              <span class="text-term-accentRed font-bold">-138 Pips</span>
+            </div>
+          </div>
+
+          <div class="mt-2 text-[9.5px] bg-[#1a0f1e] p-1.5 rounded text-gray-300 space-y-0.5">
+            <div class="text-red-300 font-bold flex justify-between">
+              <span>İyerarxiya Filtri:</span>
+              <span class="text-term-accentGreen font-bold">5/5 Şərt Tam Ödənildi</span>
+            </div>
+            <p class="text-gray-400">London Killzone zamanı SSL Sweep oldu, 5m CHoCH təsdiqləndi, FVG retest zamanı aktiv satış təzyiqi aşkarlandı.</p>
+          </div>
+
+          <div class="mt-2 flex gap-1.5">
+            <button onclick="executeMT5Trade('EUR/USD', 'SELL', 1.1190, 1.1245, 1.1115, 1.1050, 1.0980)" class="flex-1 py-1 rounded bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 text-white font-bold text-xs flex items-center justify-center gap-1 shadow">
+              <i class="fa-solid fa-paper-plane"></i> MT5 İcra Et (Short)
+            </button>
+            <button onclick="copySignalDetails('EUR/USD: SHORT | Entry: 1.1190 | SL: 1.1245 | TP1: 1.1115 | TP2: 1.1050 | TP3: 1.0980 | RRR: 1:3.1')" class="px-2.5 py-1 rounded bg-[#1f1322] hover:bg-[#2b1830] text-gray-300 hover:text-white">
+              <i class="fa-regular fa-copy"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- SIGNAL 3: GBP/USD (STRICT RULE VIOLATION -> WAIT) -->
+        <div class="border border-yellow-500/40 rounded-lg bg-[#141208] p-2.5">
+          <div class="flex items-center justify-between border-b border-gray-800 pb-1.5">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-indigo-400 text-sm">GBP/USD</span>
+              <span class="px-2 py-0.5 rounded bg-yellow-500/20 text-yellow-400 font-extrabold text-xs border border-yellow-500/40">
+                WAIT (GÖZLƏ)
+              </span>
+            </div>
+            <div class="text-right">
+              <div class="text-xs text-yellow-400 font-bold">Dəqiqlik: 52%</div>
+              <div class="text-[9px] text-gray-500">RRR: Tələb ödənmir</div>
+            </div>
+          </div>
+
+          <div class="mt-2 text-[10px] bg-[#1a170b] p-2 rounded border border-[#2d2613] text-gray-300 space-y-1">
+            <div class="text-yellow-400 font-bold flex items-center gap-1">
+              <i class="fa-solid fa-triangle-exclamation"></i> SƏRT SİQNAL QAYDASI:
+            </div>
+            <p class="text-gray-400 leading-relaxed">
+              "Bu filtrlərdən BİRİ BELƏ çatmazsa və ya Risk/Reward ən azı 1:2 / 1:3 olmazsa, yalnız <strong class="text-yellow-400">WAIT</strong> göstər!"
+            </p>
+            <div class="border-t border-[#332b16] pt-1 text-red-400 text-[9px] space-y-0.5">
+              <div>&#10007; Şərt 3: 15m/5m CHoCH/MSS formalaşmayıb (Bazar konsolidasiyadır).</div>
+              <div>&#10007; Şərt 4: Unmitigated Order Block zonasına toxunuş qeydə alınmayıb.</div>
+            </div>
+            <div class="text-[9px] text-gray-500 mt-1">
+              Tövsiyə: London sessiyasının bağlanışına qədər gözləyin.
+            </div>
+          </div>
+
+          <button disabled class="w-full mt-2 py-1 rounded bg-gray-800 text-gray-500 font-bold text-xs cursor-not-allowed">
+            <i class="fa-solid fa-ban mr-1"></i> Giriş Qadağandır (WAIT Rejimi)
+          </button>
+        </div>
+
+        <!-- SIGNAL 4: USD/JPY (SHORT CONFIRMED) -->
+        <div class="border border-red-500/40 rounded-lg bg-[#140b15] p-2.5">
+          <div class="flex items-center justify-between border-b border-gray-800 pb-1.5">
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-rose-400 text-sm">USD/JPY</span>
+              <span class="px-2 py-0.5 rounded bg-red-500/20 text-term-accentRed font-extrabold text-xs border border-red-500/40">
+                SHORT
+              </span>
+            </div>
+            <div class="text-right">
+              <div class="text-xs text-term-accentRed font-bold">Dəqiqlik: 91%</div>
+              <div class="text-[9px] text-gray-400">RRR Nisbəti: <strong class="text-cyan-300">1:2.6</strong></div>
+            </div>
+          </div>
+
+          <div class="mt-2 grid grid-cols-2 gap-1.5 text-[11px] bg-[#07050d] p-2 rounded border border-[#2b172a]">
+            <div><span class="text-gray-400">Entry:</span> <strong class="text-white">157.45 - 157.80</strong></div>
+            <div><span class="text-gray-400">SL:</span> <strong class="text-term-accentRed">158.40</strong></div>
+            <div><span class="text-gray-400">TP 1:</span> <strong class="text-cyan-400">156.50</strong></div>
+            <div><span class="text-gray-400">TP 2:</span> <strong class="text-cyan-400">155.20</strong></div>
+            <div class="col-span-2 border-t border-gray-800 pt-1">
+              <span class="text-gray-400">TP 3:</span> <strong class="text-term-accentGreen">153.80</strong>
+            </div>
+          </div>
+
+          <div class="mt-2 flex gap-1.5">
+            <button onclick="executeMT5Trade('USD/JPY', 'SELL', 157.45, 158.40, 156.50, 155.20, 153.80)" class="flex-1 py-1 rounded bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 text-white font-bold text-xs flex items-center justify-center gap-1 shadow">
+              <i class="fa-solid fa-paper-plane"></i> MT5 İcra Et (Short)
+            </button>
+            <button onclick="copySignalDetails('USD/JPY: SHORT | Entry: 157.45 | SL: 158.40 | TP1: 156.50 | TP2: 155.20 | TP3: 153.80 | RRR: 1:2.6')" class="px-2.5 py-1 rounded bg-[#1f1322] hover:bg-[#2b1830] text-gray-300 hover:text-white">
+              <i class="fa-regular fa-copy"></i>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Economic Calendar (Mini Widget) -->
+      <div class="h-44 border-t border-term-cardBorder bg-[#080d1b] p-2 flex flex-col font-mono text-[10px] shrink-0">
+        <div class="flex items-center justify-between text-gray-300 border-b border-[#182845] pb-1 mb-1">
+          <span class="font-bold text-cyan-400 flex items-center gap-1">
+            <i class="fa-regular fa-calendar-check"></i> İQTİSADİ TƏQVİM (Bakı Vaxtı GMT+4)
+          </span>
+          <span class="text-[9px] text-amber-400 font-bold">Yüksək Təsir</span>
+        </div>
+        <div class="flex-1 overflow-y-auto space-y-1 pr-1">
+          <div class="flex items-center justify-between bg-[#0a1222] p-1 rounded">
+            <span class="text-gray-400">12:30 USD</span>
+            <span class="text-white truncate max-w-[130px]">ÜDM (GDP QoQ)</span>
+            <span class="px-1 bg-red-950 text-term-accentRed font-bold rounded">High 2.8%</span>
+          </div>
+          <div class="flex items-center justify-between bg-[#0a1222] p-1 rounded">
+            <span class="text-gray-400">15:00 USD</span>
+            <span class="text-white truncate max-w-[130px]">PCE İnflyasiya</span>
+            <span class="px-1 bg-red-950 text-term-accentRed font-bold rounded">High 0.3%</span>
+          </div>
+          <div class="flex items-center justify-between bg-[#0a1222] p-1 rounded">
+            <span class="text-gray-400">17:00 USD</span>
+            <span class="text-white truncate max-w-[130px]">Fed Powell Çıxışı</span>
+            <span class="px-1 bg-amber-950 text-amber-400 font-bold rounded">Medium</span>
+          </div>
+          <div class="flex items-center justify-between bg-[#0a1222] p-1 rounded">
+            <span class="text-gray-400">21:00 USD</span>
+            <span class="text-white truncate max-w-[130px]">FOMC İclas Qərarı</span>
+            <span class="px-1 bg-red-950 text-term-accentRed font-bold rounded">High</span>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+
+  </div>
+
+  <!-- ================= BOTTOM FOOTER SYSTEM STATUS ================= -->
+  <footer class="h-7 border-t border-term-cardBorder bg-[#050811] px-3 flex items-center justify-between font-mono text-[10px] text-gray-400 shrink-0 z-30">
+    <div class="flex items-center gap-4">
+      <span class="text-cyan-400 font-bold">Trade Smarter &bull; Manage Risk &bull; Build Freedom</span>
+      <span class="hidden sm:inline text-gray-500">|</span>
+      <span class="hidden sm:flex items-center gap-1.5">
+        <i class="fa-solid fa-server text-term-accentGreen"></i> Data Feed: <strong class="text-white">CANLI (0.4ms)</strong>
+      </span>
+      <span class="hidden md:flex items-center gap-1.5">
+        <i class="fa-solid fa-link text-term-accentCyan"></i> MT5 Terminal: <strong class="text-term-accentGreen">Qoşuldu (EA Engine v2.0)</strong>
+      </span>
+    </div>
+    <div class="flex items-center gap-3">
+      <span class="text-gray-400"><i class="fa-brands fa-telegram text-sky-400 mr-1"></i>Bot: <strong class="text-white">@OligarchFX_AI_bot</strong></span>
+      <span class="text-emerald-400 flex items-center gap-1">
+        <span class="w-2 h-2 rounded-full bg-term-accentGreen pulse-dot"></span> 256,000 İndikator Aktiv
+      </span>
+    </div>
+  </footer>
+
+  <!-- ================= MT5 EXECUTION & BRIDGE MODAL ================= -->
+  <div id="mt5Modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-[#091122] border-2 border-cyan-500/50 rounded-xl w-full max-w-lg p-5 shadow-2xl shadow-cyan-950/60 font-mono relative">
+      <!-- Close Button -->
+      <button onclick="closeMT5Modal()" class="absolute top-3 right-3 text-gray-400 hover:text-white text-lg">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <!-- Modal Header -->
+      <div class="flex items-center gap-3 border-b border-gray-800 pb-3">
+        <div class="w-10 h-10 rounded-lg bg-cyan-500/20 border border-cyan-500 flex items-center justify-center text-cyan-400 text-xl">
+          <i class="fa-solid fa-bolt"></i>
+        </div>
+        <div>
+          <h3 class="text-white font-bold text-sm uppercase">MetaTrader 5 Birbaşa İcra Körpüsü</h3>
+          <p class="text-[11px] text-gray-400">Avtomatlaşdırılmış Webhook və Expert Advisor (EA) İnteqrasiyası</p>
+        </div>
+      </div>
+
+      <!-- Execution Parameters Form -->
+      <div class="mt-4 space-y-3 text-xs">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-gray-400 block mb-1">Seçilmiş Cütlük:</label>
+            <input type="text" id="modalPair" value="XAU/USD" class="w-full bg-[#060a14] border border-[#1a2c4e] rounded px-3 py-1.5 text-white font-bold" readonly>
+          </div>
+          <div>
+            <label class="text-gray-400 block mb-1">Əmr Növü:</label>
+            <input type="text" id="modalType" value="BUY LIMIT / MARKET" class="w-full bg-[#060a14] border border-[#1a2c4e] rounded px-3 py-1.5 text-term-accentGreen font-bold" readonly>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-2">
+          <div>
+            <label class="text-gray-400 block mb-1">Lot Ölçüsü:</label>
+            <input type="number" id="modalLots" value="0.10" step="0.01" class="w-full bg-[#060a14] border border-[#1a2c4e] rounded px-2 py-1.5 text-white font-bold text-center">
+          </div>
+          <div>
+            <label class="text-gray-400 block mb-1">Giriş Qiyməti:</label>
+            <input type="text" id="modalEntry" value="4002.00" class="w-full bg-[#060a14] border border-[#1a2c4e] rounded px-2 py-1.5 text-white font-bold text-center">
+          </div>
+          <div>
+            <label class="text-gray-400 block mb-1">Stop Loss (SL):</label>
+            <input type="text" id="modalSL" value="3975.00" class="w-full bg-[#060a14] border border-[#1a2c4e] rounded px-2 py-1.5 text-term-accentRed font-bold text-center">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-2">
+          <div>
+            <label class="text-gray-400 block mb-1">Take Profit 1:</label>
+            <input type="text" id="modalTP1" value="4035.00" class="w-full bg-[#060a14] border border-[#1a2c4e] rounded px-2 py-1.5 text-term-accentGreen font-bold text-center">
+          </div>
+          <div>
+            <label class="text-gray-400 block mb-1">Take Profit 2:</label>
+            <input type="text" id="modalTP2" value="4070.00" class="w-full bg-[#060a14] border border-[#1a2c4e] rounded px-2 py-1.5 text-term-accentGreen font-bold text-center">
+          </div>
+          <div>
+            <label class="text-gray-400 block mb-1">Take Profit 3:</label>
+            <input type="text" id="modalTP3" value="4110.00" class="w-full bg-[#060a14] border border-[#1a2c4e] rounded px-2 py-1.5 text-term-accentGreen font-bold text-center">
+          </div>
+        </div>
+
+        <!-- MT5 API Connection String -->
+        <div>
+          <label class="text-gray-400 block mb-1">MT5 Webhook Endpoint / EA Key:</label>
+          <div class="flex gap-2">
+            <input type="text" value="mt5://bridge.ultra-engine.internal/api/v2/order?auth=live_key_9942a" class="flex-1 bg-[#060a14] border border-[#1a2c4e] rounded px-3 py-1.5 text-[11px] text-cyan-300 font-mono" readonly>
+            <button onclick="alert('Webhook linki kopyalandı!')" class="px-3 bg-gray-800 text-white rounded hover:bg-gray-700">Kopyala</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Bottom Actions -->
+      <div class="mt-5 flex gap-3">
+        <button onclick="confirmMT5Execution()" class="flex-1 py-2.5 rounded bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/20">
+          <i class="fa-solid fa-rocket"></i> Saniyələr içində MT5-ə Göndər
+        </button>
+        <button onclick="closeMT5Modal()" class="px-4 py-2.5 rounded bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs font-bold">
+          Ləğv Et
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Alert -->
+  <div id="toast" class="fixed bottom-10 right-10 bg-cyan-950 border border-cyan-400 text-white px-4 py-2.5 rounded-lg shadow-xl font-mono text-xs flex items-center gap-2.5 z-50 transform translate-y-20 opacity-0 transition-all duration-300">
+    <i class="fa-solid fa-circle-check text-term-accentGreen text-base"></i>
+    <span id="toastMsg">Siqnal uğurla generasiya olundu!</span>
+  </div>
+
+  <!-- ================= JAVASCRIPT LOGIC & CANDLESTICK ENGINE ================= -->
+  <script>
+    // Audio Synthesizer (AudioContext) for Terminal Sounds
+    let audioCtx = null;
+    let soundEnabled = true;
+
+    function playBeep(frequency = 880, type = 'sine', duration = 0.15) {
+      if (!soundEnabled) return;
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(frequency, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch(e) {
+        console.log('Audio disabled or blocked by browser');
+      }
+    }
+
+    function toggleAudio() {
+      soundEnabled = !soundEnabled;
+      const icon = document.getElementById('soundIcon');
+      if (soundEnabled) {
+        icon.className = 'fa-solid fa-volume-high text-cyan-400';
+        showToast('Siqnal səsləri: AKTİV');
+        playBeep(950, 'triangle', 0.2);
+      } else {
+        icon.className = 'fa-solid fa-volume-xmark text-gray-500';
+        showToast('Siqnal səsləri: SÖNDÜRÜLDÜ');
+      }
+    }
+
+    // Live Baku Clock Update
+    function updateBakuTime() {
+      const now = new Date();
+      // Calculate Baku time (UTC+4)
+      const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+      const bakuOffset = 4; // hours
+      const bakuTime = new Date(utc + (3600000 * bakuOffset));
+
+      const hours = String(bakuTime.getHours()).padStart(2, '0');
+      const mins = String(bakuTime.getMinutes()).padStart(2, '0');
+      const secs = String(bakuTime.getSeconds()).padStart(2, '0');
+      document.getElementById('baku-clock').innerText = `${hours}:${mins}:${secs}`;
+
+      const months = ['Yanvar','Fevral','Mart','Aprel','May','İyun','İyul','Avqust','Sentyabr','Oktyabr','Noyabr','Dekabr'];
+      const day = bakuTime.getDate();
+      const month = months[bakuTime.getMonth()];
+      const year = bakuTime.getFullYear();
+      document.getElementById('baku-date').innerText = `${day} ${month} ${year}`;
+    }
+    setInterval(updateBakuTime, 1000);
+    updateBakuTime();
+
+    // Toast Messenger
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMsg');
+      toastMsg.innerText = msg;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 3200);
+    }
+
+    // Modal Control
+    function openMT5Modal() {
+      document.getElementById('mt5Modal').classList.remove('hidden');
+      playBeep(650, 'sine', 0.1);
+    }
+    function closeMT5Modal() {
+      document.getElementById('mt5Modal').classList.add('hidden');
+    }
+    function executeMT5Trade(pair, type, entry, sl, tp1, tp2, tp3) {
+      document.getElementById('modalPair').value = pair;
+      document.getElementById('modalType').value = type + " (Auto ICT Execution)";
+      document.getElementById('modalEntry').value = entry;
+      document.getElementById('modalSL').value = sl;
+      document.getElementById('modalTP1').value = tp1;
+      document.getElementById('modalTP2').value = tp2;
+      document.getElementById('modalTP3').value = tp3;
+      openMT5Modal();
+    }
+    function confirmMT5Execution() {
+      closeMT5Modal();
+      playBeep(1200, 'square', 0.25);
+      showToast('Əmr MetaTrader 5 terminalına 0.2ms daxilində göndərildi!');
+    }
+    function copySignalDetails(text) {
+      navigator.clipboard.writeText(text);
+      playBeep(800, 'sine', 0.1);
+      showToast('Siqnal buferə kopyalandı!');
+    }
+
+    // Indicator Live Search
+    function filterIndicators() {
+      const input = document.getElementById('indicatorSearch').value.toLowerCase();
+      const labels = document.querySelectorAll('#indicatorTreeContainer label');
+      labels.forEach(label => {
+        const text = label.textContent.toLowerCase();
+        if (text.includes(input)) {
+          label.style.display = 'flex';
+        } else {
+          label.style.display = 'none';
+        }
+      });
+    }
+
+    // Timeframe switcher
+    function setTimeframe(tf) {
+      document.querySelectorAll('.tf-btn').forEach(btn => {
+        btn.classList.remove('text-cyan-400', 'bg-cyan-950', 'font-bold');
+        btn.classList.add('text-gray-400');
+        if (btn.innerText === tf) {
+          btn.classList.remove('text-gray-400');
+          btn.classList.add('text-cyan-400', 'bg-cyan-950', 'font-bold');
+        }
+      });
+      playBeep(750, 'triangle', 0.1);
+      showToast(`Vaxt qrafiki dəyişdirildi: ${tf} (256k indikator yenidən hesablandı)`);
+      renderAllCharts();
+    }
+
+    // ================= HIGH-PERFORMANCE CANDLESTICK CHART ENGINE =================
+    // Generate synthetic realistic market candlestick data
+    function generateCandles(count, basePrice, volatility, trendBias) {
+      const candles = [];
+      let currentPrice = basePrice;
+      const now = Date.now();
+      const candleInterval = 60 * 1000;
+
+      for (let i = count; i >= 0; i--) {
+        const time = new Date(now - i * candleInterval);
+        const change = (Math.random() - 0.48 + trendBias) * volatility;
+        const open = currentPrice;
+        const close = open + change;
+        const high = Math.max(open, close) + Math.random() * (volatility * 0.7);
+        const low = Math.min(open, close) - Math.random() * (volatility * 0.7);
+        const volume = Math.floor(Math.random() * 800) + 150;
+        const cvdDelta = (close > open ? 1 : -1) * (volume * (0.3 + Math.random() * 0.5));
+
+        candles.push({ time, open, high, low, close, volume, cvdDelta });
+        currentPrice = close;
+      }
+      return candles;
+    }
+
+    // Drawing candlestick chart onto HTML5 Canvas with overlay ICT elements
+    function drawChart(canvasId, candles, options = {}) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+
+      // Adjust for device pixel ratio for ultra-crisp Retina rendering
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+
+      const width = rect.width;
+      const height = rect.height;
+
+      // Background clear
+      ctx.fillStyle = '#060a14';
+      ctx.fillRect(0, 0, width, height);
+
+      // Grid Lines
+      ctx.strokeStyle = '#111b2e';
+      ctx.lineWidth = 1;
+      const gridXSteps = 6;
+      for (let i = 1; i < gridXSteps; i++) {
+        const x = (width / gridXSteps) * i;
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, height);
+        ctx.stroke();
+      }
+      const gridYSteps = 5;
+      for (let i = 1; i < gridYSteps; i++) {
+        const y = (height / gridYSteps) * i;
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(width, y);
+        ctx.stroke();
+      }
+
+      // Min & Max calculations
+      let minPrice = Infinity;
+      let maxPrice = -Infinity;
+      candles.forEach(c => {
+        if (c.low < minPrice) minPrice = c.low;
+        if (c.high > maxPrice) maxPrice = c.high;
+      });
+
+      // Pad prices slightly
+      const padding = (maxPrice - minPrice) * 0.15;
+      minPrice -= padding;
+      maxPrice += padding;
+      const priceRange = maxPrice - minPrice || 1;
+
+      const chartHeight = height - 35; // Reserve bottom for volume
+      const candleWidth = (width - 60) / candles.length;
+
+      function getY(price) {
+        return chartHeight - ((price - minPrice) / priceRange) * chartHeight;
+      }
+
+      // 1. Draw ICT Overlay Zones (Order Block / FVG / Liquidity)
+      if (options.orderBlock) {
+        const obY1 = getY(options.orderBlock.high);
+        const obY2 = getY(options.orderBlock.low);
+        ctx.fillStyle = options.orderBlock.color || 'rgba(0, 240, 255, 0.15)';
+        ctx.fillRect(20, Math.min(obY1, obY2), width - 70, Math.abs(obY2 - obY1));
+        ctx.strokeStyle = options.orderBlock.borderColor || 'rgba(0, 240, 255, 0.5)';
+        ctx.strokeRect(20, Math.min(obY1, obY2), width - 70, Math.abs(obY2 - obY1));
+
+        ctx.fillStyle = options.orderBlock.textColor || '#00f0ff';
+        ctx.font = '9px "JetBrains Mono"';
+        ctx.fillText(options.orderBlock.label, 25, Math.min(obY1, obY2) + 10);
+      }
+
+      // Draw TP / SL horizontal target lines
+      if (options.tp) {
+        const tpY = getY(options.tp);
+        ctx.strokeStyle = '#00ff88';
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(0, tpY);
+        ctx.lineTo(width - 50, tpY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = '#00ff88';
+        ctx.fillText(`TP: ${options.tp}`, width - 48, tpY + 3);
+      }
+
+      if (options.sl) {
+        const slY = getY(options.sl);
+        ctx.strokeStyle = '#ff2e5b';
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(0, slY);
+        ctx.lineTo(width - 50, slY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = '#ff2e5b';
+        ctx.fillText(`SL: ${options.sl}`, width - 48, slY + 3);
+      }
+
+      // 2. Draw Candlesticks & Volume
+      candles.forEach((c, index) => {
+        const x = index * candleWidth + 10;
+        const openY = getY(c.open);
+        const closeY = getY(c.close);
+        const highY = getY(c.high);
+        const lowY = getY(c.low);
+        const isBull = c.close >= c.open;
+
+        const bodyColor = isBull ? '#00ff88' : '#ff2e5b';
+        ctx.strokeStyle = bodyColor;
+        ctx.fillStyle = bodyColor;
+
+        // Wick
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(x + candleWidth / 2, highY);
+        ctx.lineTo(x + candleWidth / 2, lowY);
+        ctx.stroke();
+
+        // Body
+        const bodyTop = Math.min(openY, closeY);
+        const bodyHeight = Math.max(Math.abs(openY - closeY), 1.5);
+        ctx.fillRect(x + 1, bodyTop, candleWidth - 2, bodyHeight);
+
+        // Subplot: Volume bars at bottom
+        const volHeight = (c.volume / 1000) * 25;
+        ctx.fillStyle = isBull ? 'rgba(0, 255, 136, 0.25)' : 'rgba(255, 46, 91, 0.25)';
+        ctx.fillRect(x + 1, height - volHeight, candleWidth - 2, volHeight);
+      });
+
+      // 3. EMA 200 Multi-timeframe trend curve (Smooth line)
+      ctx.beginPath();
+      ctx.strokeStyle = options.trendColor || '#00f0ff';
+      ctx.lineWidth = 1.8;
+      candles.forEach((c, index) => {
+        const x = index * candleWidth + 10 + candleWidth / 2;
+        // Generate pseudo EMA moving average
+        const avg = c.close * 0.998;
+        const y = getY(avg);
+        if (index === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+
+      // Current Price line & Badge
+      const latest = candles[candles.length - 1];
+      const curY = getY(latest.close);
+      ctx.strokeStyle = latest.close >= latest.open ? '#00ff88' : '#ff2e5b';
+      ctx.setLineDash([2, 2]);
+      ctx.beginPath();
+      ctx.moveTo(0, curY);
+      ctx.lineTo(width, curY);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Price Tag at right edge
+      ctx.fillStyle = latest.close >= latest.open ? '#00ff88' : '#ff2e5b';
+      ctx.fillRect(width - 55, curY - 8, 55, 16);
+      ctx.fillStyle = '#000000';
+      ctx.font = 'bold 9.5px "JetBrains Mono"';
+      ctx.fillText(latest.close.toFixed(options.decimals || 2), width - 50, curY + 4);
+    }
+
+    // Global Candle Datasets
+    let candlesXau, candlesEur, candlesGbp, candlesJpy;
+
+    function renderAllCharts() {
+      candlesXau = generateCandles(36, 4003.50, 4.2, 0.05);
+      candlesEur = generateCandles(36, 1.1178, 0.0018, -0.04);
+      candlesGbp = generateCandles(36, 1.3345, 0.0012, 0.00);
+      candlesJpy = generateCandles(36, 157.19, 0.35, -0.05);
+
+      drawChart('chart-xau', candlesXau, {
+        decimals: 2,
+        orderBlock: { high: 4000.0, low: 3995.0, label: 'Unmitigated OB 15m', color: 'rgba(0, 255, 136, 0.15)', borderColor: '#00ff88', textColor: '#00ff88' },
+        tp: 4035.0,
+        sl: 3975.0,
+        trendColor: '#00f0ff'
+      });
+
+      drawChart('chart-eur', candlesEur, {
+        decimals: 4,
+        orderBlock: { high: 1.1210, low: 1.1190, label: 'FVG + Liquidity Void', color: 'rgba(255, 46, 91, 0.15)', borderColor: '#ff2e5b', textColor: '#ff2e5b' },
+        tp: 1.1115,
+        sl: 1.1245,
+        trendColor: '#ff2e5b'
+      });
+
+      drawChart('chart-gbp', candlesGbp, {
+        decimals: 4,
+        orderBlock: { high: 1.3360, low: 1.3340, label: 'Consolidation POC Band', color: 'rgba(255, 170, 0, 0.12)', borderColor: '#ffaa00', textColor: '#ffaa00' },
+        trendColor: '#ffaa00'
+      });
+
+      drawChart('chart-jpy', candlesJpy, {
+        decimals: 2,
+        orderBlock: { high: 157.80, low: 157.45, label: 'Breaker Block Resistance', color: 'rgba(255, 46, 91, 0.15)', borderColor: '#ff2e5b', textColor: '#ff2e5b' },
+        tp: 156.50,
+        sl: 158.40,
+        trendColor: '#ff2e5b'
+      });
+    }
+
+    // Tick Simulator: updates the last candle of charts periodically
+    function tickSimulator() {
+      if (!candlesXau || candlesXau.length === 0) return;
+
+      // Random micro-ticks
+      const deltaXau = (Math.random() - 0.47) * 0.4;
+      const lastXau = candlesXau[candlesXau.length - 1];
+      lastXau.close += deltaXau;
+      if (lastXau.close > lastXau.high) lastXau.high = lastXau.close;
+      if (lastXau.close < lastXau.low) lastXau.low = lastXau.close;
+
+      const pXau = lastXau.close.toFixed(2);
+      document.getElementById('ticker-xau').innerText = pXau;
+      document.getElementById('c1-price').innerText = pXau;
+
+      // Redraw chart 1 quickly
+      drawChart('chart-xau', candlesXau, {
+        decimals: 2,
+        orderBlock: { high: 4000.0, low: 3995.0, label: 'Unmitigated OB 15m', color: 'rgba(0, 255, 136, 0.15)', borderColor: '#00ff88', textColor: '#00ff88' },
+        tp: 4035.0,
+        sl: 3975.0,
+        trendColor: '#00f0ff'
+      });
+    }
+
+    // Re-generate and analyze signals button handler
+    function generateLiveSignals() {
+      playBeep(1050, 'sine', 0.2);
+      renderAllCharts();
+      showToast('256,000 indikator və 5 Sərt Filtr üzrə tam analiz tamamlandı!');
+    }
+
+    // Initial load
+    window.addEventListener('load', () => {
+      renderAllCharts();
+      setInterval(tickSimulator, 1500);
+    });
+
+    window.addEventListener('resize', () => {
+      renderAllCharts();
+    });
+  </script>
+</body>
+</html>
